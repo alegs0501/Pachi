@@ -56,7 +56,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel!.fontSize = 100
         scoreLabel!.fontColor = SKColor.white
         scoreLabel!.text = "\(score)"
-        scoreLabel!.position = CGPoint(x: frame.size.width * 0.9 / 2, y: frame.size.height * 0.8 / 2)
+        scoreLabel!.position = CGPoint(x: frame.size.width * 0.8 / 2, y: frame.size.height * 0.8 / 2)
         self.addChild(scoreLabel!)
         
         //Creating blades
@@ -65,6 +65,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeBlades(at: CGPoint(x: 200, y: -60), clockwise:  true)
         makeBlades(at: CGPoint(x: -350, y: -85), clockwise:  true)
         makeBlades(at: CGPoint(x: 350, y: -85), clockwise:  false)
+        
+        //Creating line of shoot
+        let line = SKSpriteNode(color: UIColor.yellow, size: CGSize(width: frame.width, height: 2))
+        line.position = CGPoint(x: 0, y: frame.height * 0.25)
+        line.zPosition = 0
+        addChild(line)
     
         
         
@@ -136,6 +142,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let spinForever = SKAction.repeatForever(spin)
         blades.run(spinForever)
+        blades.zPosition = 1
         addChild(blades)
     }
     
@@ -145,6 +152,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let touch = touches.first{
             //Getting finger location
             let fingerLocation = touch.location(in: self)
+            
+            
+            if fingerLocation.y > frame.height * 0.25{
             /*//Creating a box node
             let box = SKSpriteNode(color: UIColor.red, size: CGSize(width: 80, height: 80))
             //Physics body
@@ -176,6 +186,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ball.zPosition = 2
             ball.name = "ball"
             addChild(ball)
+            }
         }
     }
     
