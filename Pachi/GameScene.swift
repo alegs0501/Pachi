@@ -53,17 +53,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Creating Score
         scoreLabel = SKLabelNode(text: "scoreLabel")
-        scoreLabel!.name = "scoreLabel"
         scoreLabel!.fontSize = 100
         scoreLabel!.fontColor = SKColor.white
         scoreLabel!.text = "\(score)"
         scoreLabel!.position = CGPoint(x: frame.size.width * 0.9 / 2, y: frame.size.height * 0.8 / 2)
         self.addChild(scoreLabel!)
         
+        makeBlades(at: CGPoint(x: 0, y: 0),clockwise:  true)
+        makeBlades(at: CGPoint(x: -200, y: -60), clockwise:  false)
+        makeBlades(at: CGPoint(x: 200, y: -60), clockwise:  true)
+        makeBlades(at: CGPoint(x: -350, y: -85), clockwise:  true)
+        makeBlades(at: CGPoint(x: 350, y: -85), clockwise:  false)
+    
         
         
     }
     
+    //Making bouncer
     func makeBouncer(at position: CGPoint) {
         //Bouncer
         let bouncer = SKSpriteNode(imageNamed: "bouncer")
@@ -74,6 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(bouncer)
     }
     
+    //Making slot
     func makeSlot(at position: CGPoint, isGood: Bool){
         var slotBase = SKSpriteNode()
         var slotGlow = SKSpriteNode()
@@ -102,6 +109,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(slotBase)
     }
     
+    //Making blades
+    func makeBlades(at position: CGPoint, clockwise: Bool) {
+        let blades = SKSpriteNode(imageNamed: "blades")
+        let bladesTexture = SKTexture(imageNamed: "blades.png")
+        var spin = SKAction()
+        blades.position = position
+        blades.physicsBody = SKPhysicsBody(texture: bladesTexture,
+                                                      size: CGSize(width: blades.size.width,
+                                                                   height: blades.size.height))
+        blades.physicsBody?.isDynamic = false
+        if clockwise {
+            spin = SKAction.rotate(byAngle: -CGFloat.pi, duration: 2)
+        }else {spin = SKAction.rotate(byAngle: CGFloat.pi, duration: 2)}
+        let spinForever = SKAction.repeatForever(spin)
+        blades.run(spinForever)
+        addChild(blades)
+    }
+    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //Getting first finger
@@ -121,7 +146,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             ball.physicsBody?.contactTestBitMask = (ball.physicsBody?.collisionBitMask)!
             
-            ball.physicsBody?.restitution = 0.4
+            ball.physicsBody?.restitution = 0.65
             ball.position = fingerLocation
             ball.zPosition = 2
             ball.name = "ball"
@@ -155,7 +180,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         object.removeFromParent()
     }
     
-    //Calculate rating score
+    //Calculating rating score
     func ratingScore(plus: Bool, score: Int) {
         if plus {
             switch score {
