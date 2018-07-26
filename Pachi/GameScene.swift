@@ -16,6 +16,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
+    private var score = 0
+    private var scoreLabel: SKLabelNode?
     
     override func didMove(to view: SKView) {
         
@@ -48,6 +50,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeSlot(at: CGPoint(x:-128, y:-384), isGood: false)
         makeSlot(at: CGPoint(x:128, y:-384), isGood: true)
         makeSlot(at: CGPoint(x:384, y:-384), isGood: false)
+        
+        //Creating Score
+        scoreLabel = SKLabelNode(text: "scoreLabel")
+        scoreLabel!.name = "scoreLabel"
+        scoreLabel!.fontSize = 100
+        scoreLabel!.fontColor = SKColor.white
+        scoreLabel!.text = "\(score)"
+        scoreLabel!.position = CGPoint(x: frame.size.width * 0.9 / 2, y: frame.size.height * 0.8 / 2)
+        self.addChild(scoreLabel!)
+        
+        
         
     }
     
@@ -127,14 +140,53 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func collisionBetween(ball: SKNode, object: SKNode) {
         if object.name == "good"{
+            ratingScore(plus: true, score: score)
             destroy(object: ball)
+            scoreLabel?.text = "\(score)"
         }else if object.name == "bad"{
+            ratingScore(plus: false, score: score)
             destroy(object: ball)
+            scoreLabel?.text = "\(score)"
         }
+        
     }
     
     func destroy(object: SKNode){
         object.removeFromParent()
+    }
+    
+    //Calculate rating score
+    func ratingScore(plus: Bool, score: Int) {
+        if plus {
+            switch score {
+            case 0...10:
+                self.score += 1
+            case 11...61:
+                self.score += 5
+            case 62...165:
+                self.score += 10
+            case 165...1000:
+                self.score += 15
+            default:
+                self.score = score
+            }
+        }else{
+            if score != 0{
+                switch score {
+                case 0...10:
+                    self.score -= 1
+                case 11...61:
+                    self.score -= 3
+                case 62...165:
+                    self.score -= 7
+                case 165...1000:
+                    self.score -= 10
+                default:
+                    self.score = score
+                }
+            }
+        }
+        
     }
     
 }
