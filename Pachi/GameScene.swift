@@ -59,6 +59,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel!.position = CGPoint(x: frame.size.width * 0.9 / 2, y: frame.size.height * 0.8 / 2)
         self.addChild(scoreLabel!)
         
+        //Creating blades
         makeBlades(at: CGPoint(x: 0, y: 0),clockwise:  true)
         makeBlades(at: CGPoint(x: -200, y: -60), clockwise:  false)
         makeBlades(at: CGPoint(x: 200, y: -60), clockwise:  true)
@@ -111,17 +112,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //Making blades
     func makeBlades(at position: CGPoint, clockwise: Bool) {
+        
         let blades = SKSpriteNode(imageNamed: "blades")
         let bladesTexture = SKTexture(imageNamed: "blades.png")
         var spin = SKAction()
+        
+
         blades.position = position
+        
+        //Adjusting collision to sprite with a texture
         blades.physicsBody = SKPhysicsBody(texture: bladesTexture,
                                                       size: CGSize(width: blades.size.width,
                                                                    height: blades.size.height))
         blades.physicsBody?.isDynamic = false
+        
+        //Definig rotation
         if clockwise {
             spin = SKAction.rotate(byAngle: -CGFloat.pi, duration: 2)
-        }else {spin = SKAction.rotate(byAngle: CGFloat.pi, duration: 2)}
+        }else {
+            spin = SKAction.rotate(byAngle: CGFloat.pi, duration: 2)
+            
+        }
+        
         let spinForever = SKAction.repeatForever(spin)
         blades.run(spinForever)
         addChild(blades)
@@ -141,7 +153,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addChild(box)*/
             
             //Creating color balls
-            let ball = SKSpriteNode(imageNamed: "ballRed")
+            //let ball = SKSpriteNode(imageNamed: "ballRed")
+            var ball = SKSpriteNode()
+            switch score {
+            case 0...10:
+                ball = SKSpriteNode(imageNamed: "ballRed")
+            case 11...61:
+                ball = SKSpriteNode(imageNamed: "ballGreen")
+            case 62...165:
+                ball = SKSpriteNode(imageNamed: "ballPurple")
+            case 165...1000:
+                ball = SKSpriteNode(imageNamed: "ballYellow")
+            default:
+                ball = SKSpriteNode(imageNamed: "ballRed")
+            }
             ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.height/2)
             
             ball.physicsBody?.contactTestBitMask = (ball.physicsBody?.collisionBitMask)!
